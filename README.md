@@ -12,4 +12,4 @@ Feature:
 2. Navigation between different stacks.
 3. Navigation between diffrent screens of app.
 4. Global styling example.
-5. Back navigation handled.
+5. Back navigation handling.
