@@ -1,5 +1,5 @@
 
-**React Routers navigation base struture**
+**React-native Routers navigation base struture**
 
 Installation process:
 
