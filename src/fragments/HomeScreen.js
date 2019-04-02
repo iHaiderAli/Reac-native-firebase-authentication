@@ -40,9 +40,6 @@ export default class HomeScreen extends PureComponent {
 
           <TouchableHighlight
             style={Styling.submit}
-            onPress={() => {
-              // navigation.navigate('');
-            }}
             underlayColor={appColors.white}>
             <Text style={Styling.buttonText}>Save My Location</Text>
           </TouchableHighlight>
@@ -52,9 +49,6 @@ export default class HomeScreen extends PureComponent {
 
           <TouchableHighlight
             style={Styling.submit}
-            onPress={() => {
-              navigation.navigate('AboutScreen');
-            }}
             underlayColor={appColors.white}>
             <Text style={Styling.buttonText}>List of Users</Text>
           </TouchableHighlight>

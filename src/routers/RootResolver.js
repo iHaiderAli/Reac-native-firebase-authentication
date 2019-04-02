@@ -12,7 +12,6 @@ var cache = new Cache({
   backend: AsyncStorage
 });
 
-
 export default class RootResolver extends Component {
 
   constructor() {

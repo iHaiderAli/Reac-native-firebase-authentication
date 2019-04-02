@@ -1,94 +1,87 @@
-import React from 'react'
-import { Text, SafeAreaView, StyleSheet } from 'react-native'
-import { appColors, appTexts, appDimens } from '../helpers/Constants'
-import ValidationComponent from '../helpers/ValidationComponent'
+import React, { PureComponent } from 'react'
+import { StyleSheet } from 'react-native' // prettier-ignore
 
-export default class LocationScreen extends ValidationComponent {
+import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 
+export default class LocationScreen extends PureComponent {
   state = {
-    subject: "",
-    message: "",
-    loading: false,
-    error: '',
-    success: false
-  }
+    region: "",
+    markers: [
+      {
+        title: "Lahore",
+        coordinates: {
+          latitude: 31.5204,
+          longitude: 74.3587
+        }
+      },
+      {
+        title: "Samanabad Town",
+        coordinates: {
+          latitude: 31.5377,
+          longitude: 74.2972
+        }
+      },
+      {
+        title: "Thoker Niaz Baig",
+        coordinates: {
+          latitude: 31.4914,
+          longitude: 74.2385
+        }
+      },
+      {
+        title: "Allama Iqbal Town",
+        coordinates: {
+          latitude: 31.5124,
+          longitude: 74.2845
+        }
+      }
+    ]
+  };
 
   render() {
 
+    const LATITUDE_DELTA = 0.0922;
+    const LONGITUDE_DELTA = 0.0922;
     return (
-      <SafeAreaView style={{ backgroundColor: appColors.white, flex: appDimens.one }}>
-
-        <Text style={styles.textStyle}>Support</Text>
-
-      </SafeAreaView>
-    )
+      <MapView
+        style={styles.container}
+        provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+        initialRegion={{
+          latitude: this.state.markers[0].coordinates.latitude,
+          longitude: this.state.markers[0].coordinates.longitude,
+          latitudeDelta: LATITUDE_DELTA,
+          longitudeDelta: LONGITUDE_DELTA
+        }}
+        zoomEnabled={true}
+        minZoomLevel={5}
+      >
+        {this.state.markers.map(marker => (
+          <Marker
+            coordinate={marker.coordinates}
+            title={marker.title}
+            description={marker.title}
+          />
+        ))}
+      </MapView>
+    );
   }
 }
 
 const styles = StyleSheet.create({
-
-  editText: {
-    padding: 0,
-    paddingLeft: appDimens.ten,
-    paddingRight: appDimens.ten,
-    marginBottom: appDimens.five,
-    fontFamily: appTexts.fontFamily,
-    fontSize: appDimens.forteen,
-    color: appColors.black,
+  container: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "flex-end",
+    alignItems: "center"
   },
-  textareaContainer: {
-    height: appDimens.oneNighttyEight,
-    padding: appDimens.five,
-    backgroundColor: appColors.white,
-  },
-  textarea: {
-    textAlignVertical: appTexts.textAtTop,
-    height: appDimens.oneNighttyEight,
-    paddingBottom: appDimens.five,
-    fontFamily: appTexts.fontFamily,
-    fontSize: appDimens.forteen,
-    color: appColors.black,
-  },
-  rectangele: {
-    borderColor: appColors.primary,
-    borderWidth: appDimens.one,
-  },
-
-  boldTextStyle: {
-    color: appColors.primary,
-    fontSize: appDimens.twenty,
-    marginBottom: appDimens.ten,
-    marginTop: appDimens.fifteen,
-    fontFamily: appTexts.fontFamily,
-    fontWeight: appTexts.boldText
-  },
-  normalTextStyle: {
-    fontFamily: appTexts.fontFamily,
-    color: appColors.primary, fontSize: appDimens.seventeen, marginBottom: appDimens.ten, marginTop: appDimens.ten
-  },
-  blackTextStyle: {
-    fontFamily: appTexts.fontFamily,
-    color: appColors.black, fontSize: appDimens.seventeen, marginBottom: appDimens.ten, marginTop: appDimens.five
-  },
-
-  buttonStyle: {
-    width: appDimens.eightyTwo,
-    backgroundColor: appColors.white,
-    borderWidth: appDimens.one,
-    marginTop: appDimens.ten,
-    alignSelf: appTexts.flexEnd,
-    alignItems: appTexts.centerText,
-    borderColor: appColors.primary,
-  },
-  submit: {
-    width: appDimens.eighty,
-    padding: appDimens.ten
-  },
-
-  buttonText: {
-    color: appColors.primary,
-    textAlign: appTexts.centerText,
-    fontFamily: appTexts.fontFamily,
-    fontSize: appDimens.forteen,
-  },
+  map: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0
+  }
 });
