@@ -1,27 +1,63 @@
 import React from 'react';
-import { View, TextInput, Text, StyleSheet, SafeAreaView, TouchableHighlight, ScrollView } from 'react-native';
+import { View, TextInput, Text, StyleSheet, Alert, TouchableHighlight, ScrollView } from 'react-native';
 import { appColors, appDimens, appTextSize } from '../../helpers/Constants';
 import ActivityIndicatorProgress from '../../helpers/ActivityIndicatorProgress'
 import ValidationComponent from '../../helpers/ValidationComponent';
 import Styles from '../../helpers/Styling'
 import navigation from '../../routers/navigation'
-import moveToBottom from '../../helpers/moveToBottom'
+import firebase from 'firebase'
 
 export default class Login extends ValidationComponent {
 
   state = {
-    email: "abc@gmail.com",
-    password: "1234567",
+    email: "",
     loading: false,
-    error: '',
-    success: false
+  }
+
+  sendResetEmail() {
+    // var actionCodeSettings = {
+    //   url: 'https://www.mail.google.com/?email=user@example.com',
+    //   iOS: {
+    //     bundleId: 'org.reactjs.native.example.Routers'
+    //   },
+    //   android: {
+    //     packageName: 'com.routers',
+    //     installApp: true,
+    //     minimumVersion: '12'
+    //   },
+    //   handleCodeInApp: true
+    // };
+    firebase.auth().sendPasswordResetEmail(
+      'ihaiderali.arif@gmail.com')
+      .then(function () {
+        // Password reset email sent.
+        Alert.alert(
+          'Reset Password',
+          "An email sent to your account.",
+          [
+            { text: 'OK', onPress: () => navigation.navigate("Login") },
+          ],
+          { cancelable: false }
+        )
+      })
+      .catch(function (error) {
+        // Error occurred. Inspect error.code.
+        let errorMessage = error.errorMessage
+        Alert.alert(
+          'Reset Password',
+          errorMessage,
+          [
+            { text: 'OK', onPress: () => console.log('OK Pressed') },
+          ],
+          { cancelable: false }
+        )
+      });
   }
 
   render() {
 
     const { navigation, loading } = this.props;
 
-    // display login screen
     return (
 
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ flex: 1, backgroundColor: appColors.primary }} >
@@ -47,17 +83,15 @@ export default class Login extends ValidationComponent {
 
           {this.isFieldInError('email') && this.getErrorsInField('email').map(errorMessage => <Text style={Styles.errorTextStyle}>{errorMessage}</Text>)}
 
-        
           <View style={styles.buttonStyle}>
 
             <TouchableHighlight
               style={styles.submit}
               onPress={() => {
                 if (this.validate({
-                  password: { minlength: 5, maxlength: 20, required: true },
                   email: { email: true },
                 })) {
-                  navigation.navigate('HomeScreen');
+                  this.sendResetEmail()
                 }
               }}
               underlayColor={appColors.white}>
@@ -70,9 +104,9 @@ export default class Login extends ValidationComponent {
             <TouchableHighlight
               style={styles.submit}
               onPress={() => {
-                
-                  navigation.navigate('Login');
-                
+                this.sendResetEmail()
+                navigation.navigate('Login');
+
               }}
               underlayColor={appColors.white}>
               <Text style={styles.buttonText}>Back</Text>
@@ -80,7 +114,7 @@ export default class Login extends ValidationComponent {
 
           </View>
 
-    
+
         </View>
 
       </ScrollView>
