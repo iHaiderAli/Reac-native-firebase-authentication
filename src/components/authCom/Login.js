@@ -1,11 +1,21 @@
 import React from 'react';
-import { View, TextInput, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
+import {AsyncStorage, View, TextInput, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { appColors, appDimens, appTextSize } from '../../helpers/Constants';
 import ValidationComponent from '../../helpers/ValidationComponent';
 import Styles from '../../helpers/Styling'
 import navigation from '../../routers/navigation'
 import firebase from 'firebase'
 import { GoogleSignin, statusCodes } from 'react-native-google-signin';
+
+import { Cache } from "react-native-cache";
+
+var cache = new Cache({
+  namespace: "Routers",
+  policy: {
+    maxEntries: 50000
+  },
+  backend: AsyncStorage
+});
 
 export default class Login extends ValidationComponent {
 
@@ -31,10 +41,9 @@ export default class Login extends ValidationComponent {
       const userInfo = await GoogleSignin.signIn();
       await GoogleSignin.revokeAccess();
       console.log('Success:', userInfo);
+      cache.setItem("hello", "world", function (err) {
         navigation.navigate('BottomTabsRouter');
-      // cache.setItem("hello", "world", function (err) {
-      //   navigation.navigate('BottomTabsRouter');
-      // });
+      });
 
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
@@ -61,8 +70,9 @@ export default class Login extends ValidationComponent {
 
     firebase.auth().signInWithEmailAndPassword(email, password).then((data) => {
       console.log("Login Success")
-      navigation.navigate('BottomTabsRouter')
-
+      cache.setItem("hello", "world", function (err) {
+        navigation.navigate('BottomTabsRouter');
+      });      
     }).catch((error) => {
       console.log("LoginError", error)
       this.setState({

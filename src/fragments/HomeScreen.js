@@ -1,9 +1,18 @@
 import React, { PureComponent } from 'react'
-import { View, Text, SafeAreaView, TouchableHighlight, InteractionManager, ActivityIndicator } from 'react-native'
+import { AsyncStorage, View, Text, SafeAreaView, TouchableHighlight, InteractionManager, ActivityIndicator } from 'react-native'
 import { appColors } from '../helpers/Constants'
 import Styling from '../helpers/Styling'
 import navigation from '../routers/navigation'
 import firebase from 'firebase'
+import { Cache } from "react-native-cache";
+
+var cache = new Cache({
+  namespace: "Routers",
+  policy: {
+    maxEntries: 50000
+  },
+  backend: AsyncStorage
+});
 
 export default class HomeScreen extends PureComponent {
 
@@ -15,6 +24,8 @@ export default class HomeScreen extends PureComponent {
   }
 
   logout() {
+    cache.clearAll(function (err) {
+    });
     firebase.auth().signOut();
     InteractionManager.runAfterInteractions(() => {
       navigation.navigate('Login')
