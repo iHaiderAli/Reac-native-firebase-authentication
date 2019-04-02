@@ -7,11 +7,10 @@ import Styles from '../../helpers/Styling'
 import navigation from '../../routers/navigation'
 import moveToBottom from '../../helpers/moveToBottom'
 
-export default class Login extends ValidationComponent {
+export default class ConfirmationScreen extends ValidationComponent {
 
   state = {
-    email: "abc@gmail.com",
-    password: "1234567",
+    code: "abc@gmail.com",
     loading: false,
     error: '',
     success: false
@@ -21,7 +20,6 @@ export default class Login extends ValidationComponent {
 
     const { navigation, loading } = this.props;
 
-    // display login screen
     return (
 
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ flex: 1, backgroundColor: appColors.primary }} >
@@ -29,7 +27,7 @@ export default class Login extends ValidationComponent {
         {loading && <ActivityIndicatorProgress />}
 
         <View style={styles.topLayout}>
-          <Text style={styles.signIn}>Forgot Password</Text>
+          <Text style={styles.signIn}>Verify your confirmation code</Text>
         </View>
 
         <View style={styles.loginForm} >
@@ -37,15 +35,15 @@ export default class Login extends ValidationComponent {
           {this.props.error ? <Text style={styles.errorText}> {this.props.error} </Text> : null}
 
           <TextInput
-            placeholder={'email'}
+            placeholder={'Verification Code'}
             placeholderTextColor={appColors.white}
             style={styles.editText}
-            onChangeText={(text) => { this.setState({ email: text }, this.resetState()) }}
-            value={this.state.email} />
+            onChangeText={(text) => { this.setState({ code: text }, this.resetState()) }}
+            value={this.state.code} />
 
           <View style={styles.lineStyle} />
 
-          {this.isFieldInError('email') && this.getErrorsInField('email').map(errorMessage => <Text style={Styles.errorTextStyle}>{errorMessage}</Text>)}
+          {this.isFieldInError('code') && this.getErrorsInField('code').map(errorMessage => <Text style={Styles.errorTextStyle}>{errorMessage}</Text>)}
 
         
           <View style={styles.buttonStyle}>
@@ -54,10 +52,9 @@ export default class Login extends ValidationComponent {
               style={styles.submit}
               onPress={() => {
                 if (this.validate({
-                  password: { minlength: 5, maxlength: 20, required: true },
-                  email: { email: true },
+                  code: { code: true },
                 })) {
-                  navigation.navigate('HomeScreen');
+                  navigation.navigate('BottomTabsRouter');
                 }
               }}
               underlayColor={appColors.white}>
@@ -111,7 +108,8 @@ const styles = StyleSheet.create({
   },
   signIn: {
     color: appColors.white,
-    fontSize: appTextSize.largeText.fontSize,
+    fontSize: 18,
+    fontWeight: 'bold'
   },
   errorText: {
     color: appColors.white,
@@ -159,11 +157,5 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
 });
-
-// export default connect(mapStateToProps, mapDispatchToProps
-// )(Login)
-
-export const openLoginScreen = () => navigation.navigate('Login')
-
 
 

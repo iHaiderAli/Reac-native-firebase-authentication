@@ -1,0 +1,27 @@
+# Uncomment the next line to define a global platform for your project
+# platform :ios, '9.0'
+
+target 'Routers' do
+  # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
+  # use_frameworks!
+
+  # Pods for Routers
+
+  target 'Routers-tvOSTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+  target 'RoutersTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+end
+
+target 'Routers-tvOS' do
+  # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
+  # use_frameworks!
+
+
+end

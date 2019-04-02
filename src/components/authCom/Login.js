@@ -1,35 +1,78 @@
 import React from 'react';
-import { View, TextInput, Text, StyleSheet, SafeAreaView, TouchableHighlight } from 'react-native';
+import { View, TextInput, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { appColors, appDimens, appTextSize } from '../../helpers/Constants';
-import ActivityIndicatorProgress from '../../helpers/ActivityIndicatorProgress'
 import ValidationComponent from '../../helpers/ValidationComponent';
 import Styles from '../../helpers/Styling'
 import navigation from '../../routers/navigation'
-import moveToBottom from '../../helpers/moveToBottom'
+import firebase from 'firebase'
 
 export default class Login extends ValidationComponent {
 
   state = {
-    email: "ihaiderali.arif@gmail.com",
-    password: "12345678",
-    loading: false,
-    error: '',
-    success: false
+    email: "haider@gmail.com",
+    password: "123456",
+    authenticating: false,
   }
 
-  render() {
+  onPressSignIn() {
+    this.setState({
+      authenticating: true,
+    });
 
-    const { navigation, loading } = this.props;
+    const { email, password } = this.state;
 
-    // display login screen
+    firebase.auth().signInWithEmailAndPassword(email, password)
+      .then((data) => {
+        console.log("Login Success")
+
+        this.setState({
+          authenticating: false
+        })
+
+        if (data.user.emailVerified == false) {
+          Alert.alert(
+            'Authentication Failure',
+            "Your email is not verified.",
+            [
+              { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ],
+            { cancelable: false }
+          )
+        }
+
+      })
+      .catch((error) => {
+        console.log("LoginError", error)
+        this.setState({
+          authenticating: false,
+        })
+
+        let errorMessage = error.message;
+        Alert.alert(
+          'Authentication Failure',
+          errorMessage,
+          [
+            { text: 'OK', onPress: () => console.log('OK Pressed') },
+          ],
+          { cancelable: false }
+        )
+      })
+  }
+
+  renderCurrentState() {
+    if (this.state.authenticating) {
+      return (
+        <View style={styles.form}>
+          <ActivityIndicator size='large' color={appColors.white} />
+        </View>
+      )
+    }
+
     return (
-
-      <SafeAreaView style={{ flex: 1, backgroundColor: appColors.primary }} >
-
-        {loading && <ActivityIndicatorProgress />}
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ flex: 1, backgroundColor: appColors.primary }} >
 
         <View style={styles.topLayout}>
-          <Text style={styles.signIn}>Sign In</Text>
+          <Text style={styles.signIn}>Login</Text>
         </View>
 
         <View style={styles.loginForm} >
@@ -59,60 +102,82 @@ export default class Login extends ValidationComponent {
 
           {this.isFieldInError('password') && this.getErrorsInField('password').map(errorMessage => <Text style={Styles.errorTextStyle}>{errorMessage}</Text>)}
 
-          <View style={styles.buttonStyle}>
+          <View style={{ marginTop: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
+            <View style={styles.loginButtonStyle}>
+              <TouchableOpacity
+                style={styles.submit}
+                onPress={() => {
+                  if (this.validate({
+                    password: { minlength: 5, maxlength: 20, required: true },
+                    email: { email: true },
+                  })) {
+                    this.onPressSignIn()
+                  }
+                }}
+                underlayColor={appColors.white}>
+                <Text style={{ color: appColors.primary, textAlign: 'center', fontSize: 14, fontWeight: 'bold' }}>Sign In</Text>
+              </TouchableOpacity>
+            </View>
 
-            <TouchableHighlight
-              style={styles.submit}
-              onPress={() => {
-                if (this.validate({
-                  password: { minlength: 5, maxlength: 20, required: true },
-                  email: { email: true },
-                })) {
-                  navigation.navigate('HomeScreen');
-                }
-              }}
-              underlayColor={appColors.white}>
-              <Text style={styles.buttonText}>SUBMIT</Text>
-            </TouchableHighlight>
+            <View style={styles.loginButtonStyle}>
+              <TouchableOpacity
+                style={styles.submit}
+                onPress={() => {
+                  // navigation.navigate('BottomTabsRouter');
+                }}
+                underlayColor={appColors.white}>
+                <Text style={{ color: appColors.primary, textAlign: 'center', fontSize: 14, fontWeight: 'bold' }}>Sign In With Google</Text>
+              </TouchableOpacity>
+
+            </View>
 
           </View>
-
-          <View style= {{justifyContent: 'center', alignItems: 'center', marginTop: 50}}>
-            <TouchableHighlight
+          <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 50 }}>
+            <TouchableOpacity
               onPress={() => {
                 navigation.navigate('Signup');
               }}
-              underlayColor={appColors.white}>
-              <Text>Sign up</Text>
-            </TouchableHighlight>
+              underlayColor={appColors.blue}>
+              <Text>No Account Yet? Register</Text>
+            </TouchableOpacity>
+
+            <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('ForgotPassword');
+                }}
+                underlayColor={appColors.blue}>
+                <Text>Forgot password?</Text>
+              </TouchableOpacity>
+            </View>
+
           </View>
 
         </View>
 
-        <View style={{ flex: 0.5 }}>
-          {
-            moveToBottom(
+      </ScrollView>
+    )
+  }
 
-              <TouchableHighlight
-                onPress={() => {
-                  navigation.navigate('ForgotPassword');
-                }}
-                underlayColor={appColors.white}>
-                <Text style={styles.bottomButtonStyle}>Forgot your password?</Text>
-              </TouchableHighlight>
-
-            )
-          }
-        </View>
-      </SafeAreaView>
+  render() {
+    console.disableYellowBox = true;
+    return (
+      <View style={styles.container}>
+        {this.renderCurrentState()}
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: appColors.white,
+    flex: 1,
+    backgroundColor: appColors.primary,
+  },
+  form: {
+    flex: 1,
     justifyContent: 'center',
+    alignItems: 'center'
   },
   topLayout: {
     flex: 2.5,
@@ -161,12 +226,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
+  loginButtonStyle: {
+    marginTop: 10,
+    marginLeft: 10,
+    backgroundColor: appColors.white,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: appColors.white,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
   submit: {
     borderRadius: 10,
-    width: '99%',
-    padding: 12,
+    width: '100%',
+    padding: 15,
   },
-
   buttonText: {
     color: appColors.primary,
     textAlign: 'center',
@@ -181,10 +255,4 @@ const styles = StyleSheet.create({
   },
 });
 
-// export default connect(mapStateToProps, mapDispatchToProps
-// )(Login)
-
 export const openLoginScreen = () => navigation.navigate('Login')
-
-
-

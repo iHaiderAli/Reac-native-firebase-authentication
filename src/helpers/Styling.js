@@ -4,26 +4,31 @@ import { appColors, appDimens, appTexts } from '../helpers/Constants'
 const textStyles = StyleSheet.create({
 
         errorTextStyle: {
-                color: appColors.red,
+                color: appColors.white,
                 fontSize: appDimens.fifteen,
         },
         buttonStyle: {
-                width: appDimens.eightyTwo,
-                backgroundColor: appColors.white,
-                borderWidth: appDimens.one,
-                marginTop: appDimens.ten,
-                alignSelf: appTexts.flexEnd,
-                alignItems: appTexts.centerText,
-                borderColor: appColors.primary,
+                marginTop: 40,
+                marginLeft: 30,
+                marginRight: 30,
+                backgroundColor: appColors.grayColor2,
+                borderRadius: 10,
+                borderWidth: 1,
+                borderColor: appColors.black,
+                alignItems: 'center',
+                justifyContent: 'center'
         },
         submit: {
-                width: appDimens.eighty,
-                padding: appDimens.ten
+                borderRadius: 10,
+                width: '99%',
+                padding: 12,
         },
+
         buttonText: {
                 color: appColors.primary,
-                textAlign: appTexts.centerText,
-                fontSize: appDimens.forteen,
+                textAlign: 'center',
+                fontSize: 18,
+                fontWeight: 'bold'
         },
         outerContainer: {
                 flex: 1,
@@ -35,7 +40,7 @@ const textStyles = StyleSheet.create({
         innerContainer: {
                 height: '100%',
                 width: '100%',
-                backgroundColor: '#FFF',                
+                backgroundColor: '#FFF',
                 borderRadius: 0,
                 borderWidth: 4,
                 borderColor: '#e66125',

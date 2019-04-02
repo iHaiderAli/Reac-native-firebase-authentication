@@ -6,10 +6,12 @@ const appColors = {
   black: '#423b38',
   red: 'red',
   white: 'white',
-  grayColor: '#80716d',
+  blue: '#2812b6',
+  grayColor: '#433c39',
   grayColor2: '#f0eeed',
   dividerColor: '#b1a49e',
   loaderPrimaryDark: '#cb4e1b',
+  inActiveTab: '#433c39',
   transparentColor: 'transparent'
 };
 
@@ -50,26 +52,21 @@ export { appDimens };
 
 const appTexts = {
   tabLabel1: 'Home',
-  tabLabel2: 'Messages',
-  tabLabel3: 'Support',
-  tabLabel4: 'Account',
+  tabLabel2: 'Chat',
+  tabLabel3: 'Location',
+
+  bottomText: 'bottom',
+  centerText: 'center',
+  resizeContain: 'contain',
 
 };
 export { appTexts };
 
 const appIcons = {
-  // logoMark: require('../../assets/Logo-Mark.png'),
-  // homeIconWhite: require('../../assets/home-icon-white.png'),
-  // messagesWhiteIcon: require('../../assets/messages-icon-white.png'),
-  // supportIcon: require('../../assets/supportIcon.png'),
-  // accountWhiteIcon: require('../../assets/account-icon-white.png'),
-  // minimizeIcon: require('../../assets/minimize_icon.png'),
-  // userMarkIcon: require('../../assets/user_red_mark_icon.png'),
-  // startIconRed: require('../../assets/start_icon_red.png'),
-  // startIconWhite: require('../../assets/start_icon_white.png'),
-  // messageRedIcon: require('../../assets/messages_red_icon.png'),
-  // downArrow: require('../../assets/dropdown-arrow-red.png'),
-  // crossIcon: require('../../assets/cross_red.png'),
+  logoMark: require('../../assets/Logo-Mark.png'),
+  homeIconWhite: require('../../assets/homeIcon.png'),
+  messagesWhiteIcon: require('../../assets/messageIcon.png'),
+  locationIcon: require('../../assets/location.png'),
 };
 
 export { appIcons };
