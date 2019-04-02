@@ -5,58 +5,81 @@ import ValidationComponent from '../../helpers/ValidationComponent';
 import Styles from '../../helpers/Styling'
 import navigation from '../../routers/navigation'
 import firebase from 'firebase'
+import { GoogleSignin, statusCodes } from 'react-native-google-signin';
 
 export default class Login extends ValidationComponent {
 
   state = {
-    email: "haider@gmail.com",
-    password: "123456",
+    email: "ihaiderali.arif@gmail.com",
+    password: "1234567",
     authenticating: false,
   }
 
-  onPressSignIn() {
-    this.setState({
-      authenticating: true,
+  async componentDidMount() {
+    this._configureGoogleSignIn();
+  }
+
+  _configureGoogleSignIn() {
+    GoogleSignin.configure({
+      webClientId: '892170186986-cp0df6kg8g1ojvdeit1hmu02o8g5tq00.apps.googleusercontent.com',  //Replace with your own client id from gson-services.json
+      offlineAccess: false,
     });
+  }
+  _signIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      await GoogleSignin.revokeAccess();
+      console.log('Success:', userInfo);
+        navigation.navigate('BottomTabsRouter');
+      // cache.setItem("hello", "world", function (err) {
+      //   navigation.navigate('BottomTabsRouter');
+      // });
+
+    } catch (error) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        // sign in was cancelled
+        Alert.alert('Alerts!', 'sign in was cancelled');
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        // operation in progress already
+        Alert.alert('Alerts!', 'operation in progress already');
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        Alert.alert('play services not available or outdated');
+      } else {
+        console.log('Something went wrong:', error.toString());
+        Alert.alert('Something went wrong', error.toString());
+        this.setState({
+          error,
+        });
+      }
+    }
+  };
+
+  onPressSignIn() {
 
     const { email, password } = this.state;
 
-    firebase.auth().signInWithEmailAndPassword(email, password)
-      .then((data) => {
-        console.log("Login Success")
+    firebase.auth().signInWithEmailAndPassword(email, password).then((data) => {
+      console.log("Login Success")
+      navigation.navigate('BottomTabsRouter')
 
-        this.setState({
-          authenticating: false
-        })
-
-        if (data.user.emailVerified == false) {
-          Alert.alert(
-            'Authentication Failure',
-            "Your email is not verified.",
-            [
-              { text: 'OK', onPress: () => console.log('OK Pressed') },
-            ],
-            { cancelable: false }
-          )
-        }
-
+    }).catch((error) => {
+      console.log("LoginError", error)
+      this.setState({
+        authenticating: false,
       })
-      .catch((error) => {
-        console.log("LoginError", error)
-        this.setState({
-          authenticating: false,
-        })
 
-        let errorMessage = error.message;
-        Alert.alert(
-          'Authentication Failure',
-          errorMessage,
-          [
-            { text: 'OK', onPress: () => console.log('OK Pressed') },
-          ],
-          { cancelable: false }
-        )
-      })
+      let errorMessage = error.message;
+      Alert.alert(
+        'Authentication Failure',
+        errorMessage,
+        [
+          { text: 'OK', onPress: () => console.log('OK Pressed') },
+        ],
+        { cancelable: false }
+      )
+    })
+
   }
 
   renderCurrentState() {
@@ -122,9 +145,9 @@ export default class Login extends ValidationComponent {
             <View style={styles.loginButtonStyle}>
               <TouchableOpacity
                 style={styles.submit}
-                onPress={() => {
-                  // navigation.navigate('BottomTabsRouter');
-                }}
+                onPress={
+                  this._signIn
+                }
                 underlayColor={appColors.white}>
                 <Text style={{ color: appColors.primary, textAlign: 'center', fontSize: 14, fontWeight: 'bold' }}>Sign In With Google</Text>
               </TouchableOpacity>

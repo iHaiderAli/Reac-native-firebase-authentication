@@ -3,6 +3,7 @@ import { View, Text, SafeAreaView, TouchableHighlight, InteractionManager, Activ
 import { appColors } from '../helpers/Constants'
 import Styling from '../helpers/Styling'
 import navigation from '../routers/navigation'
+import firebase from 'firebase'
 
 export default class HomeScreen extends PureComponent {
 
@@ -14,10 +15,10 @@ export default class HomeScreen extends PureComponent {
   }
 
   logout() {
-    // FirebaseAPI.logoutUser()
-    // InteractionManager.runAfterInteractions(() => {
-    //   navigation.navigate('Login')
-    // })
+    firebase.auth().signOut();
+    InteractionManager.runAfterInteractions(() => {
+      navigation.navigate('Login')
+    })
   }
 
   render() {
