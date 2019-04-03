@@ -16,7 +16,7 @@ export default class ChatScreen extends PureComponent {
     return (
       <SafeAreaView>
 
-        <Text style={styles.textStyle}>MessagesScreen</Text>
+        <Text style={styles.textStyle}>Chat Screen</Text>
 
       </SafeAreaView>
     )
@@ -26,6 +26,7 @@ export default class ChatScreen extends PureComponent {
 const styles = StyleSheet.create({
 
   textStyle: {
+    alignSelf:'center',
     fontFamily: appTexts.fontFamily,
     fontSize: appDimens.twenty,
     marginBottom: appDimens.twenty,

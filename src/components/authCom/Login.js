@@ -1,5 +1,5 @@
 import React from 'react';
-import {AsyncStorage, View, TextInput, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
+import { AsyncStorage, View, TextInput, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { appColors, appDimens, appTextSize } from '../../helpers/Constants';
 import ValidationComponent from '../../helpers/ValidationComponent';
 import Styles from '../../helpers/Styling'
@@ -35,6 +35,29 @@ export default class Login extends ValidationComponent {
       offlineAccess: false,
     });
   }
+
+  login() {
+    this.setState({
+      authenticating: true
+    });
+    // Log in and display an alert to tell the user what happened.
+    firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password
+    ).then((userData) => {
+      this.setState({
+        authenticating: false
+      });
+      cache.setItem("hello", "world", function (err) {
+        navigation.navigate('BottomTabsRouter');
+      });
+    }
+    ).catch((error) => {
+      this.setState({
+        authenticating: false
+      });
+      alert('Login Failed. Please try again' + error.message);
+    });
+  }
+
   _signIn = async () => {
     try {
       await GoogleSignin.hasPlayServices();
@@ -64,44 +87,14 @@ export default class Login extends ValidationComponent {
     }
   };
 
-  onPressSignIn() {
+  render() {
 
-    const { email, password } = this.state;
-
-    firebase.auth().signInWithEmailAndPassword(email, password).then((data) => {
-      console.log("Login Success")
-      cache.setItem("hello", "world", function (err) {
-        navigation.navigate('BottomTabsRouter');
-      });      
-    }).catch((error) => {
-      console.log("LoginError", error)
-      this.setState({
-        authenticating: false,
-      })
-
-      let errorMessage = error.message;
-      Alert.alert(
-        'Authentication Failure',
-        errorMessage,
-        [
-          { text: 'OK', onPress: () => console.log('OK Pressed') },
-        ],
-        { cancelable: false }
-      )
-    })
-
-  }
-
-  renderCurrentState() {
-    if (this.state.authenticating) {
-      return (
-        <View style={styles.form}>
-          <ActivityIndicator size='large' color={appColors.white} />
-        </View>
-      )
-    }
-
-    return (
+    console.disableYellowBox = true
+    // The content of the screen should be inputs for a username, password and submit button.
+    // If we are loading then we display an ActivityIndicator.
+    const content = this.state.authenticating ? <View style={styles.form}>
+      <ActivityIndicator size="large" color={appColors.white} />
+    </View> :
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ flex: 1, backgroundColor: appColors.primary }} >
 
         <View style={styles.topLayout}>
@@ -144,7 +137,7 @@ export default class Login extends ValidationComponent {
                     password: { minlength: 5, maxlength: 20, required: true },
                     email: { email: true },
                   })) {
-                    this.onPressSignIn()
+                    this.login()
                   }
                 }}
                 underlayColor={appColors.white}>
@@ -189,14 +182,11 @@ export default class Login extends ValidationComponent {
         </View>
 
       </ScrollView>
-    )
-  }
 
-  render() {
-    console.disableYellowBox = true;
+    // A simple UI with a toolbar, and content below it.
     return (
       <View style={styles.container}>
-        {this.renderCurrentState()}
+        {content}
       </View>
     );
   }
